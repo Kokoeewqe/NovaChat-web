@@ -7,12 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NovaChat</title>
+<title>NovaChat Pro</title>
+
 
 <link rel="stylesheet" href="style.css">
 
+<script src="/socket.io/socket.io.js"></script>
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
 </head>
 
@@ -20,85 +21,65 @@
 <body>
 
 
-<!-- AUTH -->
-
-<div class="auth-box" id="auth">
+<div class="app">
 
 
-<h1>🚀 NovaChat</h1>
+<!-- LOGIN -->
+
+<div class="auth" id="auth">
 
 
-<div id="login-form">
+<div class="logo">
+
+🚀 NovaChat
+
+</div>
 
 
-<h2>Вход</h2>
+<div class="card">
+
+
+<h2 id="authTitle">
+Вход
+</h2>
 
 
 <input 
-id="login-email"
+id="username"
+placeholder="Имя пользователя"
+>
+
+
+<input 
+id="email"
 placeholder="Email"
 >
 
 
 <input 
-id="login-password"
+id="password"
 type="password"
 placeholder="Пароль"
 >
 
 
 <button onclick="login()">
+
 Войти
+
 </button>
 
 
-<button class="second"
-onclick="showRegister()">
+
+<button 
+class="secondary"
+onclick="register()">
+
 Создать аккаунт
+
 </button>
 
 
-</div>
-
-
-
-
-
-<div id="register-form" style="display:none">
-
-
-<h2>Регистрация</h2>
-
-
-<input
-id="reg-name"
-placeholder="Имя"
->
-
-
-<input
-id="reg-email"
-placeholder="Email"
->
-
-
-<input
-id="reg-password"
-type="password"
-placeholder="Пароль"
->
-
-
-<button onclick="register()">
-Создать
-</button>
-
-
-<button class="second"
-onclick="showLogin()">
-Назад
-</button>
-
 
 </div>
 
@@ -109,72 +90,56 @@ onclick="showLogin()">
 
 
 
+<!-- MAIN CHAT -->
 
 
-
-<!-- CHAT -->
-
-
-<div id="chat-app">
+<div class="chat" id="chat">
 
 
-<aside class="sidebar">
-
-
-<div class="logo">
-🚀 NovaChat
-</div>
-
-
-
-<div class="profile">
-
-
-<div class="avatar" id="user-avatar">
-👤
-</div>
+<header>
 
 
 <div>
 
 
-<b id="current-user">
-User
-</b>
+<h2>
+🚀 NovaChat
+</h2>
 
 
-<br>
+<span id="online">
 
+offline
 
-<span id="user-status">
-online
 </span>
 
 
-<br>
-
-
-<small id="user-date">
-</small>
-
-
 </div>
 
 
-</div>
 
-
-<button 
-onclick="logout()"
-class="logout">
+<button onclick="logout()">
 
 Выйти
 
 </button>
 
 
-</div>
+</header>
 
+
+
+
+
+
+<div class="content">
+
+
+
+<!-- USERS -->
+
+
+<aside>
 
 
 <h3>
@@ -182,7 +147,7 @@ class="logout">
 </h3>
 
 
-<div id="users-list">
+<div id="users">
 
 </div>
 
@@ -194,30 +159,14 @@ class="logout">
 
 
 
-
-<section class="chat">
-
-
-<div class="chat-header">
+<!-- MESSAGES -->
 
 
-<h2>
-Общий чат
-</h2>
+<section>
 
 
-<span>
-🟢 online
-</span>
-
-
-</div>
-
-
-
-
-
-<div id="messages"
+<div 
+id="messages"
 class="messages">
 
 </div>
@@ -225,18 +174,32 @@ class="messages">
 
 
 
+<div class="typing" id="typing">
 
-<div class="input-area">
+</div>
+
+
+
+
+
+<div class="send">
 
 
 <input
-id="message-text"
-placeholder="Сообщение..."
+
+id="message"
+
+placeholder="Написать сообщение..."
+
+oninput="typing()"
+
 >
 
 
 <button onclick="sendMessage()">
+
 ➤
+
 </button>
 
 
@@ -246,10 +209,38 @@ placeholder="Сообщение..."
 </section>
 
 
+
+
+
+
+<!-- PROFILE -->
+
+
+<div class="profile">
+
+
+<h3>
+Профиль
+</h3>
+
+
+<div id="profile">
+
+</div>
+
+
 </div>
 
 
 
+</div>
+
+
+</div>
+
+
+
+</div>
 
 
 
