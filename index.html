@@ -1,35 +1,142 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NovaChat</title>
+    <title>NovaChat</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
+
 
 <body>
 
+
 <div class="app">
 
-<h1>🚀 NovaChat</h1>
 
-<p>Онлайн мессенджер</p>
+    <!-- Левая панель -->
 
-<input id="name" placeholder="Введите имя">
+    <aside class="sidebar">
 
-<div id="messages"></div>
+        <div class="logo">
+            🚀 NovaChat
+        </div>
 
-<input id="text" placeholder="Введите сообщение">
 
-<button onclick="send()">Отправить</button>
+        <div class="profile">
+
+            <div class="avatar">
+                👤
+            </div>
+
+            <div>
+                <h3 id="username">
+                    Гость
+                </h3>
+
+                <span>
+                    🟢 онлайн
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="users-title">
+            Пользователи
+        </div>
+
+
+        <div class="users">
+
+            <div class="user">
+                👤 Иван
+            </div>
+
+
+            <div class="user">
+                👤 Анна
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- Чат -->
+
+
+    <main class="chat">
+
+
+        <header class="chat-header">
+
+            <h2>
+                Общий чат
+            </h2>
+
+            <span>
+                🔥 NovaChat
+            </span>
+
+        </header>
+
+
+
+        <div id="messages" class="messages">
+
+
+        </div>
+
+
+
+
+        <div class="input-box">
+
+
+            <input 
+                id="name"
+                placeholder="Ваше имя"
+            >
+
+
+
+            <input 
+                id="text"
+                placeholder="Напишите сообщение..."
+            >
+
+
+
+            <button onclick="send()">
+
+                ➤
+
+            </button>
+
+
+        </div>
+
+
+
+    </main>
+
+
 
 </div>
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+
 <script src="app.js"></script>
 
+
 </body>
+
 </html>
