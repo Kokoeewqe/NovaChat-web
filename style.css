@@ -7,12 +7,25 @@
 
 
 body{
+
     min-height:100vh;
-    background:#0f172a;
+
+    background:
+    linear-gradient(
+    135deg,
+    #020617,
+    #1d4ed8
+    );
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
 }
+
+
 
 
 /* AUTH */
@@ -20,50 +33,110 @@ body{
 .auth-box{
 
     width:380px;
+
     background:#111827;
-    padding:30px;
-    border-radius:20px;
+
     color:white;
 
+    padding:35px;
+
+    border-radius:25px;
+
+    box-shadow:
+    0 25px 70px rgba(0,0,0,.5);
+
 }
+
 
 
 .auth-box h1{
+
     text-align:center;
+
     margin-bottom:25px;
+
 }
+
+
+
+.auth-box h2{
+
+    margin-bottom:20px;
+
+}
+
+
 
 
 input{
 
     width:100%;
-    height:45px;
-    padding:0 15px;
-    margin-bottom:12px;
 
-    border-radius:10px;
+    height:45px;
+
+    margin-bottom:15px;
+
+    padding:0 15px;
+
+    border-radius:12px;
+
     border:none;
 
+    outline:none;
+
     background:#1f2937;
+
     color:white;
 
+    font-size:15px;
+
 }
+
 
 
 button{
 
     width:100%;
+
     height:45px;
 
     border:none;
-    border-radius:10px;
+
+    border-radius:12px;
 
     background:#2563eb;
+
     color:white;
 
     cursor:pointer;
 
+    font-size:16px;
+
+    margin-bottom:10px;
+
+    transition:.2s;
+
 }
+
+
+
+button:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+button.second{
+
+    background:#374151;
+
+}
+
+
 
 
 
@@ -73,48 +146,53 @@ button{
 
 #chat-app{
 
-    width:1000px;
-    height:650px;
+    width:1100px;
 
-    display:flex;
+    height:700px;
+
+    display:none;
 
     background:white;
 
-    border-radius:20px;
+    border-radius:25px;
 
     overflow:hidden;
+
+    box-shadow:
+
+    0 25px 80px rgba(0,0,0,.5);
 
 }
 
 
-
-
-
-/* SIDEBAR */
 
 
 .sidebar{
 
-    width:280px;
+    width:300px;
 
-    background:#111827;
+    background:#020617;
 
     color:white;
 
-    padding:20px;
+    padding:25px;
 
 }
+
 
 
 
 .logo{
 
-    font-size:25px;
+    font-size:28px;
+
     font-weight:bold;
 
-    margin-bottom:25px;
+    margin-bottom:30px;
 
 }
+
+
 
 
 
@@ -126,20 +204,25 @@ button{
 
     gap:15px;
 
+    background:#111827;
+
     padding:15px;
 
-    background:#1f2937;
-
     border-radius:15px;
+
+    margin-bottom:25px;
 
 }
 
 
 
+
+
 .avatar{
 
-    width:45px;
-    height:45px;
+    width:50px;
+
+    height:50px;
 
     border-radius:50%;
 
@@ -148,7 +231,10 @@ button{
     display:flex;
 
     align-items:center;
+
     justify-content:center;
+
+    font-size:22px;
 
 }
 
@@ -156,21 +242,22 @@ button{
 
 #users-list{
 
-    margin-top:20px;
+    margin-top:15px;
 
 }
 
 
 
+
 .user{
 
-    padding:12px;
+    background:#111827;
 
-    background:#1f2937;
+    padding:13px;
+
+    border-radius:12px;
 
     margin-bottom:10px;
-
-    border-radius:10px;
 
     cursor:pointer;
 
@@ -178,9 +265,17 @@ button{
 
 
 
+.user:hover{
+
+    background:#2563eb;
+
+}
 
 
-/* CHAT AREA */
+
+
+
+/* CHAT WINDOW */
 
 
 .chat{
@@ -195,19 +290,23 @@ button{
 
 
 
+
 .chat-header{
 
     height:70px;
-
-    padding:20px;
-
-    border-bottom:1px solid #ddd;
 
     display:flex;
 
     justify-content:space-between;
 
+    align-items:center;
+
+    padding:20px;
+
+    border-bottom:1px solid #ddd;
+
 }
+
 
 
 
@@ -217,11 +316,13 @@ button{
 
     padding:20px;
 
-    background:#f1f5f9;
-
     overflow-y:auto;
 
+    background:#f1f5f9;
+
 }
+
+
 
 
 
@@ -229,22 +330,59 @@ button{
 
     background:white;
 
-    padding:12px 15px;
-
-    border-radius:12px;
-
-    margin-bottom:10px;
-
     width:max-content;
 
     max-width:70%;
+
+    padding:12px 16px;
+
+    border-radius:15px;
+
+    margin-bottom:12px;
+
+    box-shadow:
+
+    0 5px 15px rgba(0,0,0,.08);
+
+}
+
+
+
+.msg small{
+
+    color:#64748b;
 
 }
 
 
 
 
-.input-box{
+
+.my-msg{
+
+    margin-left:auto;
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+
+
+.my-msg small{
+
+    color:#dbeafe;
+
+}
+
+
+
+
+
+
+.input-area{
 
     display:flex;
 
@@ -252,45 +390,46 @@ button{
 
     padding:15px;
 
-    background:white;
-
 }
 
 
 
-.input-box input{
-
-    flex:1;
+.input-area input{
 
     margin:0;
 
-    color:black;
+    flex:1;
 
     background:#e5e7eb;
 
-}
-
-
-
-.input-box button{
-
-    width:60px;
+    color:black;
 
 }
 
 
 
+.input-area button{
+
+    width:70px;
+
+}
 
 
-@media(max-width:800px){
+
+
+@media(max-width:900px){
+
 
 #chat-app{
 
     width:100%;
+
     height:100vh;
+
     border-radius:0;
 
 }
+
 
 
 .sidebar{
@@ -299,31 +438,5 @@ button{
 
 }
 
-}
-/* MY MESSAGE */
-
-.my-msg{
-
-    background:#2563eb;
-
-    color:white;
-
-    margin-left:auto;
-
-}
-
-
-.my-msg b{
-
-    color:white;
-
-}
-
-
-/* OTHER MESSAGE */
-
-.other-msg{
-
-    margin-right:auto;
 
 }
