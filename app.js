@@ -9,8 +9,6 @@ let currentUser = null;
 
 let selectedUser = null;
 
-let typingTimer = null;
-
 
 
 const messagesBox =
@@ -19,51 +17,10 @@ document.getElementById("messages");
 
 
 
-// ==========================
-// HELPERS
-// ==========================
 
-
-function saveUser(user){
-
-localStorage.setItem(
-"user",
-JSON.stringify(user)
-);
-
-}
-
-
-
-function getUser(){
-
-const user =
-localStorage.getItem("user");
-
-
-return user ?
-JSON.parse(user)
-:
-null;
-
-}
-
-
-
-
-function showError(text){
-
-alert(text);
-
-}
-
-
-
-
-
-// ==========================
+// ======================
 // AUTH
-// ==========================
+// ======================
 
 
 function showLogin(){
@@ -78,8 +35,6 @@ document.getElementById(
 ).style.display="none";
 
 }
-
-
 
 
 
@@ -106,40 +61,34 @@ async function register(){
 
 
 const username =
-document.getElementById(
-"reg-name"
-).value.trim();
-
+document.getElementById("reg-name").value.trim();
 
 
 const email =
-document.getElementById(
-"reg-email"
-).value.trim();
-
+document.getElementById("reg-email").value.trim();
 
 
 const password =
-document.getElementById(
-"reg-password"
-).value;
+document.getElementById("reg-password").value;
 
 
 
 if(!username || !email || !password){
 
-return showError(
-"Заполни все поля"
-);
+alert("Заполни все поля");
+
+return;
 
 }
 
 
 
-const res =
-await fetch(
+try{
 
-SERVER+"/register",
+
+const response = await fetch(
+
+SERVER + "/register",
 
 {
 
@@ -154,9 +103,7 @@ headers:{
 body:JSON.stringify({
 
 username,
-
 email,
-
 password
 
 })
@@ -168,27 +115,44 @@ password
 
 
 const data =
-await res.json();
+await response.json();
 
 
 
 if(data.error){
 
-return showError(
-data.error
-);
+alert(data.error);
+
+return;
 
 }
 
 
 
 alert(
-"Аккаунт создан"
+"Аккаунт создан!"
 );
 
 
 
 showLogin();
+
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+alert(
+"Сервер недоступен"
+);
+
+
+}
 
 
 }
@@ -205,21 +169,19 @@ async function login(){
 
 
 const email =
-document.getElementById(
-"login-email"
-).value.trim();
+document.getElementById("login-email").value.trim();
 
 
 
 const password =
-document.getElementById(
-"login-password"
-).value;
+document.getElementById("login-password").value;
 
 
 
-const res =
-await fetch(
+try{
+
+
+const response = await fetch(
 
 SERVER+"/login",
 
@@ -236,7 +198,6 @@ headers:{
 body:JSON.stringify({
 
 email,
-
 password
 
 })
@@ -248,30 +209,46 @@ password
 
 
 const data =
-await res.json();
+await response.json();
 
 
 
 if(data.error){
 
-return showError(
-data.error
-);
+alert(data.error);
+
+return;
 
 }
 
 
 
-saveUser(
-data.user
+localStorage.setItem(
+
+"user",
+
+JSON.stringify(data.user)
+
 );
 
 
 
-openChat(
-data.user
+openChat(data.user);
+
+
+
+}
+
+catch(error){
+
+console.log(error);
+
+alert(
+"Ошибка подключения"
 );
 
+
+}
 
 
 }
@@ -284,9 +261,9 @@ data.user
 
 
 
-// ==========================
-// OPEN CHAT
-// ==========================
+// ======================
+// CHAT START
+// ======================
 
 
 function openChat(user){
@@ -316,13 +293,17 @@ user.username;
 
 
 socket.emit(
+
 "online",
+
 user
+
 );
 
 
 
 loadUsers();
+
 
 
 }
@@ -335,15 +316,15 @@ loadUsers();
 
 
 
-// ==========================
+// ======================
 // USERS
-// ==========================
+// ======================
 
 
 async function loadUsers(){
 
 
-const res =
+const response =
 await fetch(
 
 SERVER+"/users"
@@ -353,7 +334,7 @@ SERVER+"/users"
 
 
 const users =
-await res.json();
+await response.json();
 
 
 
@@ -376,39 +357,48 @@ return;
 
 
 
-const div =
+const item =
 document.createElement("div");
 
 
 
-div.className="user";
+item.className="user";
 
 
 
-div.dataset.id =
-user.id;
+item.dataset.id=user.id;
 
 
 
-div.innerHTML = `
+item.innerHTML=
 
+`
 👤 ${user.username}
-
 `;
 
 
 
-div.onclick=()=>{
+item.onclick=()=>{
+
 
 selectedUser=user;
 
-openPrivate(user);
+
+document.querySelector(
+".chat-header h2"
+).innerText=user.username;
+
+
+
+loadPrivateMessages();
+
+
 
 };
 
 
 
-box.appendChild(div);
+box.appendChild(item);
 
 
 
@@ -426,27 +416,9 @@ box.appendChild(div);
 
 
 
-function openPrivate(user){
-
-
-document.querySelector(
-".chat-header h2"
-).innerText =
-user.username;
-
-
-
-loadPrivateMessages();
-
-
-}
-
-
-
-
-
-
-
+// ======================
+// PRIVATE HISTORY
+// ======================
 
 
 async function loadPrivateMessages(){
@@ -457,7 +429,7 @@ return;
 
 
 
-const res =
+const response =
 await fetch(
 
 SERVER+
@@ -475,7 +447,7 @@ selectedUser.id
 
 
 const data =
-await res.json();
+await response.json();
 
 
 
@@ -484,7 +456,7 @@ messagesBox.innerHTML="";
 
 
 data.forEach(
-renderMessage
+showMessage
 );
 
 
@@ -498,9 +470,9 @@ renderMessage
 
 
 
-// ==========================
-// SOCKET EVENTS
-// ==========================
+// ======================
+// SOCKET
+// ======================
 
 
 
@@ -515,7 +487,7 @@ messagesBox.innerHTML="";
 
 
 data.forEach(
-renderMessage
+showMessage
 );
 
 
@@ -525,18 +497,18 @@ renderMessage
 
 
 
+
 socket.on(
 
 "message",
 
-msg=>{
+(data)=>{
 
 
-renderMessage(msg);
+showMessage(data);
 
 
 });
-
 
 
 
@@ -547,19 +519,19 @@ socket.on(
 
 "privateMessage",
 
-msg=>{
+(data)=>{
 
 
 if(
 
 selectedUser &&
 
-msg.sender_id===selectedUser.id
+data.sender_id===selectedUser.id
 
 ){
 
 
-renderMessage(msg);
+showMessage(data);
 
 
 }
@@ -571,6 +543,13 @@ renderMessage(msg);
 
 
 
+
+
+
+
+// ======================
+// ONLINE
+// ======================
 
 
 socket.on(
@@ -582,33 +561,40 @@ socket.on(
 
 document
 .querySelectorAll(".user")
-.forEach(el=>{
+.forEach(
+el=>{
 
 
-el.innerHTML =
-"👤 "+el.innerText.replace("🟢 ","");
+let name =
+el.innerText.replace(
+"🟢 ",
+""
+);
+
+
+el.innerText=
+"👤 "+name;
 
 
 });
 
 
+users.forEach(user=>{
 
-users.forEach(u=>{
 
-
-const el =
+const element =
 document.querySelector(
 
-`[data-id="${u.id}"]`
+`[data-id="${user.id}"]`
 
 );
 
 
 
-if(el){
+if(element){
 
-el.innerHTML =
-"🟢 "+u.username;
+element.innerText =
+"🟢 "+user.username;
 
 }
 
@@ -626,13 +612,12 @@ el.innerHTML =
 
 
 
+// ======================
+// MESSAGE
+// ======================
 
-// ==========================
-// MESSAGES
-// ==========================
 
-
-function renderMessage(msg){
+function showMessage(data){
 
 
 
@@ -649,9 +634,9 @@ if(
 
 currentUser &&
 
-(msg.username===currentUser.username ||
+(data.username===currentUser.username ||
 
-msg.sender_name===currentUser.username)
+data.sender_name===currentUser.username)
 
 ){
 
@@ -664,13 +649,7 @@ div.classList.add(
 
 
 const time =
-new Date(
-
-msg.created_at ||
-
-Date.now()
-
-)
+new Date()
 .toLocaleTimeString([],{
 
 hour:"2-digit",
@@ -681,26 +660,23 @@ minute:"2-digit"
 
 
 
+div.innerHTML=
 
-div.innerHTML = `
-
+`
 
 <b>
-${msg.username || msg.sender_name}
+${data.username || data.sender_name}
 </b>
-
 
 <br>
 
-${msg.text}
-
+${data.text}
 
 <br>
 
 <small>
 ${time}
 </small>
-
 
 `;
 
@@ -714,6 +690,7 @@ messagesBox.scrollTop =
 messagesBox.scrollHeight;
 
 
+
 }
 
 
@@ -724,9 +701,9 @@ messagesBox.scrollHeight;
 
 
 
-// ==========================
+// ======================
 // SEND
-// ==========================
+// ======================
 
 
 function sendMessage(){
@@ -752,7 +729,6 @@ return;
 if(selectedUser){
 
 
-
 socket.emit(
 
 "privateMessage",
@@ -771,7 +747,8 @@ sender_name:
 currentUser.username,
 
 
-text
+text:text
+
 
 }
 
@@ -793,7 +770,8 @@ socket.emit(
 username:
 currentUser.username,
 
-text
+text:text
+
 
 }
 
@@ -816,132 +794,26 @@ input.value="";
 
 
 
-
-
-// ==========================
-// TYPING
-// ==========================
-
-
-const input =
-document.getElementById(
-"message-text"
-);
-
-
-
-if(input){
-
-
-input.addEventListener(
-
-"input",
-
-()=>{
-
-
-socket.emit(
-"typing",
-currentUser?.username
-);
-
-
-
-clearTimeout(
-typingTimer
-);
-
-
-
-typingTimer=setTimeout(()=>{
-
-
-socket.emit(
-"stopTyping"
-);
-
-
-},1000);
-
-
-
-}
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-socket.on(
-
-"typing",
-
-(name)=>{
-
-
-const header =
-document.querySelector(
-".chat-header span"
-);
-
-
-
-header.innerText =
-name+" печатает...";
-
-
-});
-
-
-
-
-
-socket.on(
-
-"stopTyping",
-
-()=>{
-
-
-document.querySelector(
-".chat-header span"
-).innerText=
-"🟢 online";
-
-
-});
-
-
-
-
-
-
-
-
-
-// ==========================
-// START
-// ==========================
+// ======================
+// AUTO LOGIN
+// ======================
 
 
 window.onload=()=>{
 
 
-const user =
-getUser();
+const saved =
+localStorage.getItem(
+"user"
+);
 
 
 
-if(user){
+if(saved){
 
-openChat(user);
+openChat(
+JSON.parse(saved)
+);
 
 }
 
@@ -953,15 +825,10 @@ openChat(user);
 
 
 
-
-
 function logout(){
-
 
 localStorage.clear();
 
-
 location.reload();
-
 
 }
