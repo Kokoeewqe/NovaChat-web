@@ -1,28 +1,11 @@
 const socket = io("https://novachat-server2.onrender.com");
 
 
-function send() {
-
-    const name = document.getElementById("name").value || "Гость";
-    const text = document.getElementById("text").value;
-
-    if (text.trim() === "") {
-        return;
-    }
-
-    socket.emit("message", {
-        name: name,
-        text: text
-    });
-
-    document.getElementById("text").value = "";
-
-}
+const messages = document.getElementById("messages");
 
 
-socket.on("message", function(data) {
-
-    const messages = document.getElementById("messages");
+// Добавление сообщения на экран
+function addMessage(data) {
 
     const div = document.createElement("div");
 
@@ -33,5 +16,51 @@ socket.on("message", function(data) {
     messages.appendChild(div);
 
     messages.scrollTop = messages.scrollHeight;
+}
+
+
+// Получаем историю из базы
+socket.on("history", function(history) {
+
+    history.forEach(function(message) {
+
+        addMessage(message);
+
+    });
+
+});
+
+
+// Отправка сообщения
+function send() {
+
+    const name = document.getElementById("name").value || "Гость";
+
+    const text = document.getElementById("text").value;
+
+
+    if (text.trim() === "") {
+        return;
+    }
+
+
+    socket.emit("message", {
+
+        name: name,
+
+        text: text
+
+    });
+
+
+    document.getElementById("text").value = "";
+
+}
+
+
+// Новые сообщения
+socket.on("message", function(data) {
+
+    addMessage(data);
 
 });
