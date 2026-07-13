@@ -1,24 +1,24 @@
 const SERVER = "https://novachat-server2.onrender.com";
 
-
 const socket = io(SERVER);
-
 
 
 let currentUser = null;
 
+let selectedUser = null;
 
 
-// ==========================
-// AUTH FORMS
-// ==========================
+
+// =========================
+// AUTH
+// =========================
 
 
 function showLogin(){
 
-    document.getElementById("login-form").style.display="block";
+document.getElementById("login-form").style.display="block";
 
-    document.getElementById("register-form").style.display="none";
+document.getElementById("register-form").style.display="none";
 
 }
 
@@ -26,9 +26,88 @@ function showLogin(){
 
 function showRegister(){
 
-    document.getElementById("login-form").style.display="none";
+document.getElementById("login-form").style.display="none";
 
-    document.getElementById("register-form").style.display="block";
+document.getElementById("register-form").style.display="block";
+
+}
+
+
+
+
+// =========================
+// LOGIN
+// =========================
+
+
+async function login(){
+
+
+const email =
+document.getElementById("login-email").value;
+
+
+const password =
+document.getElementById("login-password").value;
+
+
+
+const res = await fetch(
+
+SERVER+"/login",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+email,
+password
+
+})
+
+}
+
+);
+
+
+
+const data =
+await res.json();
+
+
+
+if(data.error){
+
+alert(data.error);
+
+return;
+
+}
+
+
+
+localStorage.setItem(
+"user",
+JSON.stringify(data.user)
+);
+
+
+
+localStorage.setItem(
+"token",
+data.token
+);
+
+
+
+openChat(data.user);
+
 
 }
 
@@ -37,9 +116,10 @@ function showRegister(){
 
 
 
-// ==========================
+
+// =========================
 // REGISTER
-// ==========================
+// =========================
 
 
 async function register(){
@@ -58,8 +138,7 @@ document.getElementById("reg-password").value;
 
 
 
-
-const res = await fetch(
+await fetch(
 
 SERVER+"/register",
 
@@ -68,21 +147,16 @@ SERVER+"/register",
 method:"POST",
 
 headers:{
-
 "Content-Type":"application/json"
-
 },
 
 body:JSON.stringify({
 
 username,
-
 email,
-
 password
 
 })
-
 
 }
 
@@ -90,116 +164,14 @@ password
 
 
 
-const data =
-await res.json();
-
-
-
-if(data.error){
-
-alert(data.error);
-
-return;
-
-}
-
-
-
 alert(
-"Аккаунт создан!"
+"Аккаунт создан"
 );
 
 
 showLogin();
 
 
-
-}
-
-
-
-
-
-
-
-// ==========================
-// LOGIN
-// ==========================
-
-
-async function login(){
-
-
-const email =
-document.getElementById("login-email").value;
-
-
-const password =
-document.getElementById("login-password").value;
-
-
-
-
-const res = await fetch(
-
-SERVER+"/login",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-email,
-
-password
-
-})
-
-}
-
-);
-
-
-
-const data =
-await res.json();
-
-
-
-if(data.error){
-
-alert(data.error);
-
-return;
-
-}
-
-
-
-localStorage.setItem(
-"token",
-data.token
-);
-
-
-
-localStorage.setItem(
-"user",
-JSON.stringify(data.user)
-);
-
-
-
-openChat(data.user);
-
-
 }
 
 
@@ -209,9 +181,9 @@ openChat(data.user);
 
 
 
-// ==========================
+// =========================
 // OPEN CHAT
-// ==========================
+// =========================
 
 
 function openChat(user){
@@ -222,7 +194,6 @@ currentUser=user;
 
 
 document.getElementById("auth").style.display="none";
-
 
 document.getElementById("chat-app").style.display="flex";
 
@@ -244,7 +215,6 @@ user
 loadUsers();
 
 
-
 }
 
 
@@ -254,10 +224,9 @@ loadUsers();
 
 
 
-
-// ==========================
-// LOAD USERS
-// ==========================
+// =========================
+// USERS
+// =========================
 
 
 async function loadUsers(){
@@ -277,43 +246,44 @@ await res.json();
 
 
 
-const sidebar =
-document.querySelector(".sidebar");
-
-
-
-let block =
+let list =
 document.getElementById(
 "users-list"
 );
 
 
 
-if(!block){
+if(!list){
 
 
-block =
+list =
 document.createElement("div");
 
-block.id="users-list";
+list.id="users-list";
 
 
-sidebar.appendChild(block);
+document
+.querySelector(".sidebar")
+.appendChild(list);
 
 
 }
 
 
 
-
-block.innerHTML="";
+list.innerHTML="";
 
 
 
 users.forEach(user=>{
 
 
-let div =
+if(user.id === currentUser.id)
+return;
+
+
+
+const div =
 document.createElement("div");
 
 
@@ -321,7 +291,9 @@ document.createElement("div");
 div.className="user";
 
 
-div.innerHTML=`
+div.innerHTML=
+
+`
 
 👤 ${user.username}
 
@@ -329,7 +301,15 @@ div.innerHTML=`
 
 
 
-block.appendChild(div);
+div.onclick=()=>{
+
+openPrivateChat(user);
+
+};
+
+
+
+list.appendChild(div);
 
 
 
@@ -345,64 +325,72 @@ block.appendChild(div);
 
 
 
-
-// ==========================
-// ONLINE USERS
-// ==========================
-
-
-socket.on(
-
-"onlineUsers",
-
-(users)=>{
+// =========================
+// PRIVATE CHAT
+// =========================
 
 
-document
-.querySelectorAll(".user")
-.forEach(el=>{
+function openPrivateChat(user){
 
 
-el.innerHTML =
-el.innerHTML.replace(
-"🟢 ",
-""
+selectedUser=user;
+
+
+
+document.querySelector(
+".chat-header h2"
+).innerText=
+
+user.username;
+
+
+
+loadPrivateMessages();
+
+
+}
+
+
+
+
+
+
+
+async function loadPrivateMessages(){
+
+
+const res =
+await fetch(
+
+SERVER+
+
+"/private/"+
+
+currentUser.id+
+
+"/"+
+
+selectedUser.id
+
 );
 
 
-});
+
+const msgs =
+await res.json();
 
 
 
-users.forEach(u=>{
+messages.innerHTML="";
 
 
-document
-.querySelectorAll(".user")
-.forEach(el=>{
 
+msgs.forEach(addMessage);
 
-if(
-el.innerText.includes(
-u.username
-)
-)
-
-{
-
-el.innerHTML=
-"🟢 "+u.username;
 
 }
 
 
-});
-
-
-});
-
-
-});
 
 
 
@@ -410,11 +398,9 @@ el.innerHTML=
 
 
 
-
-
-// ==========================
-// CHAT HISTORY
-// ==========================
+// =========================
+// MESSAGES
+// =========================
 
 
 const messages =
@@ -424,19 +410,18 @@ document.getElementById(
 
 
 
+
 socket.on(
 
 "history",
 
-(history)=>{
+(data)=>{
 
 
 messages.innerHTML="";
 
 
-history.forEach(
-addMessage
-);
+data.forEach(addMessage);
 
 
 });
@@ -461,6 +446,36 @@ addMessage(data);
 
 
 
+socket.on(
+
+"privateMessage",
+
+(data)=>{
+
+
+if(
+
+selectedUser &&
+
+data.sender_id===selectedUser.id
+
+){
+
+
+addMessage(data);
+
+
+}
+
+
+});
+
+
+
+
+
+
+
 
 function addMessage(data){
 
@@ -472,10 +487,11 @@ document.createElement("div");
 div.className="msg";
 
 
+div.innerHTML=
 
-div.innerHTML=`
+`
 
-<b>${data.username}</b>
+<b>${data.username || data.sender_name}</b>
 
 <br>
 
@@ -501,9 +517,9 @@ messages.scrollHeight;
 
 
 
-// ==========================
-// SEND MESSAGE
-// ==========================
+// =========================
+// SEND
+// =========================
 
 
 function sendMessage(){
@@ -516,12 +532,46 @@ document.getElementById(
 
 
 
-if(
-!input.value.trim()
-)
-
+if(!input.value.trim())
 return;
 
+
+
+// личное сообщение
+
+if(selectedUser){
+
+
+socket.emit(
+
+"privateMessage",
+
+{
+
+sender_id:
+currentUser.id,
+
+
+receiver_id:
+selectedUser.id,
+
+
+sender_name:
+currentUser.username,
+
+
+text:
+input.value
+
+
+}
+
+);
+
+
+}
+
+else{
 
 
 socket.emit(
@@ -533,7 +583,6 @@ socket.emit(
 username:
 currentUser.username,
 
-
 text:
 input.value
 
@@ -541,6 +590,9 @@ input.value
 }
 
 );
+
+
+}
 
 
 
@@ -556,9 +608,10 @@ input.value="";
 
 
 
-// ==========================
+
+// =========================
 // AUTO LOGIN
-// ==========================
+// =========================
 
 
 window.onload=()=>{
@@ -573,11 +626,9 @@ localStorage.getItem(
 
 if(saved){
 
-
 openChat(
 JSON.parse(saved)
 );
-
 
 }
 
@@ -590,24 +641,10 @@ JSON.parse(saved)
 
 
 
-
-// ==========================
-// LOGOUT
-// ==========================
-
-
 function logout(){
 
 
-localStorage.removeItem(
-"user"
-);
-
-
-localStorage.removeItem(
-"token"
-);
-
+localStorage.clear();
 
 location.reload();
 
