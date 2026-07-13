@@ -300,3 +300,30 @@ button{
 }
 
 }
+/* MY MESSAGE */
+
+.my-msg{
+
+    background:#2563eb;
+
+    color:white;
+
+    margin-left:auto;
+
+}
+
+
+.my-msg b{
+
+    color:white;
+
+}
+
+
+/* OTHER MESSAGE */
+
+.other-msg{
+
+    margin-right:auto;
+
+}
