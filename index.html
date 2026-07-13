@@ -9,12 +9,10 @@
 
 <title>NovaChat</title>
 
-
 <link rel="stylesheet" href="style.css">
 
 
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
 
 </head>
 
@@ -22,17 +20,12 @@
 <body>
 
 
+<!-- AUTH -->
 
-<!-- =====================
-AUTH
-===================== -->
-
-
-<div id="auth" class="auth-box">
+<div class="auth-box" id="auth">
 
 
 <h1>🚀 NovaChat</h1>
-
 
 
 <div id="login-form">
@@ -54,15 +47,13 @@ placeholder="Пароль"
 >
 
 
-button onclick="login()">
+<button onclick="login()">
 Войти
 </button>
 
 
-<br><br>
-
-
-<button onclick="showRegister()">
+<button class="second"
+onclick="showRegister()">
 Создать аккаунт
 </button>
 
@@ -79,19 +70,16 @@ button onclick="login()">
 <h2>Регистрация</h2>
 
 
-
 <input
 id="reg-name"
 placeholder="Имя"
 >
 
 
-
 <input
 id="reg-email"
 placeholder="Email"
 >
-
 
 
 <input
@@ -101,17 +89,13 @@ placeholder="Пароль"
 >
 
 
-
 <button onclick="register()">
-Регистрация
+Создать
 </button>
 
 
-
-<br><br>
-
-
-<button onclick="showLogin()">
+<button class="second"
+onclick="showLogin()">
 Назад
 </button>
 
@@ -119,7 +103,6 @@ placeholder="Пароль"
 </div>
 
 
-
 </div>
 
 
@@ -128,22 +111,18 @@ placeholder="Пароль"
 
 
 
-<!-- =====================
-CHAT
-===================== -->
+
+<!-- CHAT -->
 
 
-<div id="chat-app" style="display:none">
+<div id="chat-app">
 
 
-
-<div class="sidebar">
+<aside class="sidebar">
 
 
 <div class="logo">
-
 🚀 NovaChat
-
 </div>
 
 
@@ -152,41 +131,40 @@ CHAT
 
 
 <div class="avatar">
-
 👤
-
 </div>
 
 
 <div>
 
-<h3 id="current-user">
-
+<b id="current-user">
 User
+</b>
 
-</h3>
+<br>
 
 <span>
-Online
+online
 </span>
 
-
 </div>
 
 
 </div>
 
+
+
+<h3>
+Пользователи
+</h3>
 
 
 <div id="users-list">
 
-
 </div>
 
 
-
-</div>
-
+</aside>
 
 
 
@@ -194,9 +172,7 @@ Online
 
 
 
-
-<div class="chat">
-
+<section class="chat">
 
 
 <div class="chat-header">
@@ -212,17 +188,13 @@ Online
 </span>
 
 
-
 </div>
 
 
 
 
 
-
-
-<div 
-id="messages"
+<div id="messages"
 class="messages">
 
 </div>
@@ -231,42 +203,24 @@ class="messages">
 
 
 
-
-
-
-
-<div class="input-box">
+<div class="input-area">
 
 
 <input
-
 id="message-text"
-
-placeholder="Введите сообщение..."
-
-onkeydown="
-if(event.key==='Enter') sendMessage()
-"
-
+placeholder="Сообщение..."
 >
 
 
 <button onclick="sendMessage()">
-
 ➤
-
 </button>
 
 
-
 </div>
 
 
-
-</div>
-
-
-
+</section>
 
 
 </div>
