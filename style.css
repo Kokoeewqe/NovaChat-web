@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+.app {
+    width: 350px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+h1 {
+    color: #2563eb;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+#messages {
+    height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 10px;
+    text-align: left;
+    border-radius: 8px;
+}
+
+.msg {
+    padding: 5px;
+    margin-bottom: 5px;
+    background: #eee;
+    border-radius: 5px;
+}
