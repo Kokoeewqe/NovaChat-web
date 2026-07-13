@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NovaChat</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>🚀 NovaChat</h1>
+
+<p>Онлайн мессенджер</p>
+
+<input id="name" placeholder="Введите имя">
+
+<div id="messages"></div>
+
+<input id="text" placeholder="Введите сообщение">
+
+<button onclick="send()">Отправить</button>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
