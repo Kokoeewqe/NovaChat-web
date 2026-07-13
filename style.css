@@ -440,3 +440,26 @@ button.second{
 
 
 }
+.logout{
+
+background:#dc2626;
+
+margin-top:20px;
+
+}
+
+
+.logout:hover{
+
+background:#b91c1c;
+
+}
+
+
+.profile small{
+
+color:#94a3b8;
+
+font-size:12px;
+
+}
