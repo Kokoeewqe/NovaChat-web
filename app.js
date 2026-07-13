@@ -1,56 +1,93 @@
-function addMessage(data){
+async function register(){
 
 
-const div =
-document.createElement("div");
+const username =
+document.getElementById("reg-name").value;
 
 
-div.className="msg";
+const email =
+document.getElementById("reg-email").value;
+
+
+const password =
+document.getElementById("reg-password").value;
 
 
 
-if(
-currentUser &&
-data.username === currentUser.username
-){
+try{
 
-div.classList.add(
-"my-msg"
-);
+
+const res = await fetch(
+
+SERVER+"/register",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+username,
+email,
+password
+
+})
 
 }
-else{
 
-div.classList.add(
-"other-msg"
 );
+
+
+
+const data =
+await res.json();
+
+
+
+console.log(data);
+
+
+
+if(data.error){
+
+alert(data.error);
+
+return;
 
 }
 
 
 
-div.innerHTML=
-
-`
-
-<b>
-${data.username || data.sender_name}
-</b>
-
-<br>
-
-${data.text}
-
-`;
+alert(
+"Аккаунт успешно создан!"
+);
 
 
 
-messages.appendChild(div);
+showLogin();
 
 
 
-messages.scrollTop =
-messages.scrollHeight;
+}
+
+catch(e){
+
+
+console.log(e);
+
+
+alert(
+"Ошибка подключения к серверу"
+);
+
+
+}
 
 
 }
