@@ -2,135 +2,215 @@
 <html lang="ru">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NovaChat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
+<title>NovaChat</title>
 
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
 </head>
 
 
 <body>
 
 
-<div class="app">
+<!-- АВТОРИЗАЦИЯ -->
+
+<div id="auth" class="auth-box">
 
 
-    <!-- Левая панель -->
-
-    <aside class="sidebar">
-
-        <div class="logo">
-            🚀 NovaChat
-        </div>
+    <h1>
+        🚀 NovaChat
+    </h1>
 
 
-        <div class="profile">
+    <div class="tabs">
 
-            <div class="avatar">
-                👤
-            </div>
-
-            <div>
-                <h3 id="username">
-                    Гость
-                </h3>
-
-                <span>
-                    🟢 онлайн
-                </span>
-            </div>
-
-        </div>
+        <button onclick="showLogin()">
+            Вход
+        </button>
 
 
-        <div class="users-title">
-            Пользователи
-        </div>
+        <button onclick="showRegister()">
+            Регистрация
+        </button>
 
-
-        <div class="users">
-
-            <div class="user">
-                👤 Иван
-            </div>
-
-
-            <div class="user">
-                👤 Анна
-            </div>
-
-        </div>
-
-
-    </aside>
+    </div>
 
 
 
-    <!-- Чат -->
+    <div id="login-form">
 
 
-    <main class="chat">
+        <input 
+        id="login-email"
+        placeholder="Email">
 
 
-        <header class="chat-header">
-
-            <h2>
-                Общий чат
-            </h2>
-
-            <span>
-                🔥 NovaChat
-            </span>
-
-        </header>
+        <input 
+        id="login-password"
+        type="password"
+        placeholder="Пароль">
 
 
+        <button onclick="login()">
+            Войти
+        </button>
 
-        <div id="messages" class="messages">
 
-
-        </div>
+    </div>
 
 
 
 
-        <div class="input-box">
+    <div id="register-form" style="display:none;">
 
 
-            <input 
-                id="name"
-                placeholder="Ваше имя"
-            >
+        <input 
+        id="reg-name"
+        placeholder="Имя">
+
+
+        <input 
+        id="reg-email"
+        placeholder="Email">
+
+
+        <input 
+        id="reg-password"
+        type="password"
+        placeholder="Пароль">
+
+
+        <button onclick="register()">
+            Создать аккаунт
+        </button>
+
+
+    </div>
+
+
+</div>
 
 
 
-            <input 
-                id="text"
-                placeholder="Напишите сообщение..."
-            >
+
+
+<!-- ЧАТ -->
+
+
+<div id="chat-app" style="display:none;">
 
 
 
-            <button onclick="send()">
-
-                ➤
-
-            </button>
+<aside class="sidebar">
 
 
-        </div>
+<div class="logo">
+🚀 NovaChat
+</div>
 
 
 
-    </main>
+<div class="profile">
+
+
+<div class="avatar">
+👤
+</div>
+
+
+<div>
+
+<h3 id="current-user">
+</h3>
+
+
+<span>
+🟢 онлайн
+</span>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<button onclick="logout()">
+
+Выйти
+
+</button>
+
+
+
+</aside>
+
+
+
+
+
+<main class="chat">
+
+
+<header class="chat-header">
+
+<h2>
+Общий чат
+</h2>
+
+
+<span>
+NovaChat v2
+</span>
+
+</header>
+
+
+
+
+<div id="messages" class="messages">
+
+</div>
+
+
+
+
+
+<div class="input-box">
+
+
+<input 
+id="message-text"
+placeholder="Напишите сообщение...">
+
+
+
+<button onclick="sendMessage()">
+
+➤
+
+</button>
+
+
+</div>
+
+
+
+</main>
 
 
 
 </div>
+
+
 
 
 
