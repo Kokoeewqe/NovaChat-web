@@ -1,485 +1,234 @@
-const SERVER = "https://novachat-server2.onrender.com";
-
-
-const socket = io(SERVER);
-
-
+const socket = io();
 
 let currentUser = null;
 
-let selectedUser = null;
+let token = localStorage.getItem("token");
 
 
 
-const messagesBox =
-document.getElementById("messages");
 
 
+// =====================
+// START
+// =====================
 
 
+window.onload = ()=>{
 
-// ======================
-// AUTH
-// ======================
 
+if(token){
 
-function showLogin(){
 
-document.getElementById(
-"login-form"
-).style.display="block";
+const saved =
+localStorage.getItem("user");
 
 
-document.getElementById(
-"register-form"
-).style.display="none";
+if(saved){
 
-}
+currentUser =
+JSON.parse(saved);
 
 
-
-function showRegister(){
-
-document.getElementById(
-"login-form"
-).style.display="none";
-
-
-document.getElementById(
-"register-form"
-).style.display="block";
-
-}
-
-
-
-
-
-
-
-async function register(){
-
-
-const username =
-document.getElementById("reg-name").value.trim();
-
-
-const email =
-document.getElementById("reg-email").value.trim();
-
-
-const password =
-document.getElementById("reg-password").value;
-
-
-
-if(!username || !email || !password){
-
-alert("Заполни все поля");
-
-return;
-
-}
-
-
-
-try{
-
-
-const response = await fetch(
-
-SERVER + "/register",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-username,
-email,
-password
-
-})
-
-}
-
-);
-
-
-
-const data =
-await response.json();
-
-
-
-if(data.error){
-
-alert(data.error);
-
-return;
-
-}
-
-
-
-alert(
-"Аккаунт создан!"
-);
-
-
-
-showLogin();
-
-
-
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-alert(
-"Сервер недоступен"
-);
+showChat();
 
 
 }
 
 
 }
-
-
-
-
-
-
-
-
-
-async function login(){
-
-
-const email =
-document.getElementById("login-email").value.trim();
-
-
-
-const password =
-document.getElementById("login-password").value;
-
-
-
-try{
-
-
-const response = await fetch(
-
-SERVER+"/login",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-email,
-password
-
-})
-
-}
-
-);
-
-
-
-const data =
-await response.json();
-
-
-
-if(data.error){
-
-alert(data.error);
-
-return;
-
-}
-
-
-
-localStorage.setItem(
-
-"user",
-
-JSON.stringify(data.user)
-
-);
-
-
-
-openChat(data.user);
-
-
-
-}
-
-catch(error){
-
-console.log(error);
-
-alert(
-"Ошибка подключения"
-);
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-// ======================
-// CHAT START
-// ======================
-
-
-function openChat(user){
-
-
-currentUser=user;
-
-
-
-document.getElementById(
-"auth"
-).style.display="none";
-
-
-
-document.getElementById(
-"chat-app"
-).style.display="flex";
-
-
-
-document.getElementById(
-"current-user"
-).innerText =
-user.username;
-document.getElementById(
-"user-avatar"
-).innerText =
-user.avatar || "👤";
-
-
-document.getElementById(
-"user-status"
-).innerText =
-user.status || "online";
-
-
-if(user.created_at){
-
-document.getElementById(
-"user-date"
-).innerText =
-"С нами с " +
-new Date(user.created_at)
-.toLocaleDateString();
-
-}
-
-
-
-socket.emit(
-
-"online",
-
-user
-
-);
-
-
-
-loadUsers();
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ======================
-// USERS
-// ======================
-
-
-async function loadUsers(){
-
-
-const response =
-await fetch(
-
-SERVER+"/users"
-
-);
-
-
-
-const users =
-await response.json();
-
-
-
-const box =
-document.getElementById(
-"users-list"
-);
-
-
-
-box.innerHTML="";
-
-
-
-users.forEach(user=>{
-
-
-if(user.id===currentUser.id)
-return;
-
-
-
-const item =
-document.createElement("div");
-
-
-
-item.className="user";
-
-
-
-item.dataset.id=user.id;
-
-
-
-item.innerHTML=
-
-`
-👤 ${user.username}
-`;
-
-
-
-item.onclick=()=>{
-
-
-selectedUser=user;
-
-
-document.querySelector(
-".chat-header h2"
-).innerText=user.username;
-
-
-
-loadPrivateMessages();
-
 
 
 };
 
 
 
-box.appendChild(item);
 
+
+
+
+// =====================
+// REGISTER
+// =====================
+
+
+async function register(){
+
+
+const username =
+document.getElementById("username").value;
+
+
+const email =
+document.getElementById("email").value;
+
+
+const password =
+document.getElementById("password").value;
+
+
+
+const res =
+await fetch("/register",{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:JSON.stringify({
+
+username,
+
+email,
+
+password
+
+})
 
 
 });
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ======================
-// PRIVATE HISTORY
-// ======================
-
-
-async function loadPrivateMessages(){
-
-
-if(!selectedUser)
-return;
-
-
-
-const response =
-await fetch(
-
-SERVER+
-
-"/private/"+
-
-currentUser.id+
-
-"/"+
-
-selectedUser.id
-
-);
 
 
 
 const data =
-await response.json();
+await res.json();
 
 
 
-messagesBox.innerHTML="";
+if(data.token){
 
 
-
-data.forEach(
-showMessage
+localStorage.setItem(
+"token",
+data.token
 );
+
+
+localStorage.setItem(
+"user",
+JSON.stringify(data.user)
+);
+
+
+
+currentUser=data.user;
+
+
+showChat();
+
+
+}
+
+else{
+
+
+alert(data.error);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+// =====================
+// LOGIN
+// =====================
+
+
+async function login(){
+
+
+const email =
+document.getElementById("email").value;
+
+
+
+const password =
+document.getElementById("password").value;
+
+
+
+const res =
+await fetch("/login",{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:JSON.stringify({
+
+email,
+
+password
+
+})
+
+
+});
+
+
+
+const data =
+await res.json();
+
+
+
+if(data.token){
+
+
+localStorage.setItem(
+"token",
+data.token
+);
+
+
+localStorage.setItem(
+"user",
+JSON.stringify(data.user)
+);
+
+
+
+currentUser=data.user;
+
+
+showChat();
+
+
+}
+
+
+else{
+
+
+alert(data.error);
+
+
+}
 
 
 }
@@ -492,227 +241,77 @@ showMessage
 
 
 
-// ======================
-// SOCKET
-// ======================
+// =====================
+// SHOW CHAT
+// =====================
+
+
+function showChat(){
+
+
+document.getElementById("auth")
+.style.display="none";
+
+
+document.getElementById("chat")
+.style.display="block";
 
 
 
-socket.on(
-
-"history",
-
-(data)=>{
+document.getElementById("online")
+.innerHTML="online";
 
 
-messagesBox.innerHTML="";
 
-
-data.forEach(
-showMessage
+socket.emit(
+"online",
+currentUser
 );
 
 
-});
+
+loadMessages();
 
 
 
-
-
-
-socket.on(
-
-"message",
-
-(data)=>{
-
-
-showMessage(data);
-
-
-});
-
-
-
-
-
-
-socket.on(
-
-"privateMessage",
-
-(data)=>{
-
-
-if(
-
-selectedUser &&
-
-data.sender_id===selectedUser.id
-
-){
-
-
-showMessage(data);
+loadProfile();
 
 
 }
 
 
-});
 
 
 
 
 
 
+// =====================
+// PROFILE
+// =====================
 
 
+function loadProfile(){
 
-// ======================
-// ONLINE
-// ======================
 
+document.getElementById("profile")
+.innerHTML=`
 
-socket.on(
+<h2>
+${currentUser.username}
+</h2>
 
-"onlineUsers",
+<p>
+${currentUser.email}
+</p>
 
-(users)=>{
-
-
-document
-.querySelectorAll(".user")
-.forEach(
-el=>{
-
-
-let name =
-el.innerText.replace(
-"🟢 ",
-""
-);
-
-
-el.innerText=
-"👤 "+name;
-
-
-});
-
-
-users.forEach(user=>{
-
-
-const element =
-document.querySelector(
-
-`[data-id="${user.id}"]`
-
-);
-
-
-
-if(element){
-
-element.innerText =
-"🟢 "+user.username;
-
-}
-
-
-});
-
-
-});
-
-
-
-
-
-
-
-
-
-// ======================
-// MESSAGE
-// ======================
-
-
-function showMessage(data){
-
-
-
-const div =
-document.createElement("div");
-
-
-
-div.className="msg";
-
-
-
-if(
-
-currentUser &&
-
-(data.username===currentUser.username ||
-
-data.sender_name===currentUser.username)
-
-){
-
-div.classList.add(
-"my-msg"
-);
-
-}
-
-
-
-const time =
-new Date()
-.toLocaleTimeString([],{
-
-hour:"2-digit",
-
-minute:"2-digit"
-
-});
-
-
-
-div.innerHTML=
-
-`
-
-<b>
-${data.username || data.sender_name}
-</b>
-
-<br>
-
-${data.text}
-
-<br>
-
-<small>
-${time}
-</small>
+<p>
+🚀 NovaChat user
+</p>
 
 `;
 
 
-
-messagesBox.appendChild(div);
-
-
-
-messagesBox.scrollTop =
-messagesBox.scrollHeight;
-
-
-
 }
 
 
@@ -721,21 +320,16 @@ messagesBox.scrollHeight;
 
 
 
-
-
-// ======================
-// SEND
-// ======================
+// =====================
+// SEND MESSAGE
+// =====================
 
 
 function sendMessage(){
 
 
 const input =
-document.getElementById(
-"message-text"
-);
-
+document.getElementById("message");
 
 
 const text =
@@ -748,59 +342,28 @@ return;
 
 
 
-if(selectedUser){
-
-
-socket.emit(
-
-"privateMessage",
-
-{
-
-sender_id:
-currentUser.id,
-
-
-receiver_id:
-selectedUser.id,
-
-
-sender_name:
-currentUser.username,
-
-
-text:text
-
-
-}
-
-);
-
-
-
-}
-
-else{
-
-
 socket.emit(
 
 "message",
 
 {
 
+
+sender_id:
+currentUser.id,
+
+
 username:
 currentUser.username,
 
-text:text
+
+text
 
 
 }
+
 
 );
-
-
-}
 
 
 
@@ -815,42 +378,246 @@ input.value="";
 
 
 
-
-// ======================
-// AUTO LOGIN
-// ======================
-
-
-window.onload=()=>{
+// =====================
+// RECEIVE MESSAGE
+// =====================
 
 
-const saved =
-localStorage.getItem(
-"user"
+socket.on(
+"message",
+
+msg=>{
+
+
+addMessage(msg);
+
+
+}
+
 );
 
 
 
-if(saved){
 
-openChat(
-JSON.parse(saved)
-);
+
+
+
+function addMessage(msg){
+
+
+const box =
+document.getElementById("messages");
+
+
+
+const div =
+document.createElement("div");
+
+
+
+div.className="message";
+
+
+
+if(
+currentUser &&
+msg.sender_id===currentUser.id
+){
+
+div.classList.add("mine");
 
 }
 
 
-};
+
+div.innerHTML=`
+
+<b>
+${msg.username}
+</b>
+
+<br>
+
+${msg.text}
+
+`;
+
+
+
+box.appendChild(div);
+
+
+
+box.scrollTop =
+box.scrollHeight;
+
+
+}
 
 
 
 
+
+
+
+// =====================
+// HISTORY
+// =====================
+
+
+async function loadMessages(){
+
+
+const res =
+await fetch("/messages");
+
+
+const data =
+await res.json();
+
+
+
+document.getElementById("messages")
+.innerHTML="";
+
+
+
+data.forEach(addMessage);
+
+
+}
+
+
+
+
+
+
+
+
+// =====================
+// TYPING
+// =====================
+
+
+function typing(){
+
+
+socket.emit(
+
+"typing",
+
+{
+
+username:
+currentUser.username
+
+}
+
+);
+
+
+}
+
+
+
+
+
+socket.on(
+"typing",
+
+data=>{
+
+
+document.getElementById("typing")
+.innerHTML=
+
+data.username+" печатает...";
+
+
+setTimeout(()=>{
+
+
+document.getElementById("typing")
+.innerHTML="";
+
+
+},1500);
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+// =====================
+// USERS ONLINE
+// =====================
+
+
+socket.on(
+
+"onlineUsers",
+
+users=>{
+
+
+const box =
+document.getElementById("users");
+
+
+
+box.innerHTML="";
+
+
+
+users.forEach(user=>{
+
+
+box.innerHTML +=`
+
+<p>
+
+🟢 ${user.username}
+
+</p>
+
+`;
+
+
+});
+
+
+}
+
+);
+
+
+
+
+
+
+
+
+// =====================
+// LOGOUT
+// =====================
 
 
 function logout(){
 
-localStorage.clear();
+
+localStorage.removeItem("token");
+
+localStorage.removeItem("user");
+
 
 location.reload();
+
 
 }
