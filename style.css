@@ -1,133 +1,113 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Inter, Arial, sans-serif;
-}
+const SERVER = "https://novachat-server2.onrender.com";
+
+const socket = io(SERVER);
 
 
-body {
+let currentUser = null;
 
-    height:100vh;
+let selectedUser = null;
 
-    background:
-    linear-gradient(
-        135deg,
-        #020617,
-        #1e293b
-    );
 
-    display:flex;
 
-    justify-content:center;
+// =========================
+// AUTH
+// =========================
 
-    align-items:center;
+
+function showLogin(){
+
+document.getElementById("login-form").style.display="block";
+
+document.getElementById("register-form").style.display="none";
 
 }
 
 
 
-/* =====================
-   LOGIN / REGISTER
-===================== */
+function showRegister(){
 
+document.getElementById("login-form").style.display="none";
 
-.auth-box {
-
-    width:400px;
-
-    background:#111827;
-
-    padding:35px;
-
-    border-radius:25px;
-
-    color:white;
-
-    box-shadow:
-    0 20px 60px rgba(0,0,0,.5);
-
-}
-
-
-
-.auth-box h1 {
-
-    text-align:center;
-
-    margin-bottom:30px;
-
-}
-
-
-
-.tabs {
-
-    display:flex;
-
-    gap:10px;
-
-    margin-bottom:25px;
-
-}
-
-
-
-.tabs button {
-
-    flex:1;
+document.getElementById("register-form").style.display="block";
 
 }
 
 
 
 
-input {
+// =========================
+// LOGIN
+// =========================
 
-    width:100%;
 
-    padding:15px;
+async function login(){
 
-    margin-bottom:15px;
 
-    border:none;
+const email =
+document.getElementById("login-email").value;
 
-    border-radius:15px;
 
-    background:#1f2937;
+const password =
+document.getElementById("login-password").value;
 
-    color:white;
 
-    outline:none;
+
+const res = await fetch(
+
+SERVER+"/login",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+email,
+password
+
+})
+
+}
+
+);
+
+
+
+const data =
+await res.json();
+
+
+
+if(data.error){
+
+alert(data.error);
+
+return;
 
 }
 
 
 
-
-button {
-
-    padding:14px;
-
-    border:none;
-
-    border-radius:15px;
-
-    background:#2563eb;
-
-    color:white;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-}
+localStorage.setItem(
+"user",
+JSON.stringify(data.user)
+);
 
 
 
-button:hover {
+localStorage.setItem(
+"token",
+data.token
+);
 
-    background:#1d4ed8;
+
+
+openChat(data.user);
+
 
 }
 
@@ -135,104 +115,62 @@ button:hover {
 
 
 
-/* =====================
-   CHAT APP
-===================== */
 
 
-#chat-app {
+// =========================
+// REGISTER
+// =========================
 
-    width:1100px;
 
-    height:700px;
+async function register(){
 
-    display:flex;
 
-    overflow:hidden;
+const username =
+document.getElementById("reg-name").value;
 
-    border-radius:25px;
 
-    background:white;
+const email =
+document.getElementById("reg-email").value;
 
-    box-shadow:
-    0 25px 60px rgba(0,0,0,.5);
 
-}
+const password =
+document.getElementById("reg-password").value;
 
 
 
+await fetch(
 
-.sidebar {
+SERVER+"/register",
 
+{
 
-    width:300px;
+method:"POST",
 
-    background:#020617;
+headers:{
+"Content-Type":"application/json"
+},
 
-    color:white;
+body:JSON.stringify({
 
-    padding:25px;
+username,
+email,
+password
 
-
-}
-
-
-
-.logo {
-
-    font-size:28px;
-
-    font-weight:800;
-
-    margin-bottom:35px;
+})
 
 }
 
-
-
-.profile {
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    background:#1e293b;
-
-    padding:15px;
-
-    border-radius:20px;
-
-    margin-bottom:25px;
-
-}
+);
 
 
 
-.avatar {
-
-    width:50px;
-
-    height:50px;
-
-    background:#2563eb;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-}
+alert(
+"Аккаунт создан"
+);
 
 
+showLogin();
 
-.profile span {
-
-    color:#22c55e;
 
 }
 
@@ -240,75 +178,42 @@ button:hover {
 
 
 
-.chat {
-
-    flex:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-}
 
 
 
+// =========================
+// OPEN CHAT
+// =========================
 
-.chat-header {
 
-    height:80px;
+function openChat(user){
 
-    display:flex;
 
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:25px;
-
-    border-bottom:1px solid #ddd;
-
-}
+currentUser=user;
 
 
 
+document.getElementById("auth").style.display="none";
 
-.messages {
-
-    flex:1;
-
-    padding:25px;
-
-    overflow-y:auto;
-
-    background:#f1f5f9;
-
-}
+document.getElementById("chat-app").style.display="flex";
 
 
 
-.msg {
-
-    background:white;
-
-    padding:15px;
-
-    border-radius:18px;
-
-    margin-bottom:15px;
-
-    max-width:70%;
-
-    box-shadow:
-    0 5px 15px rgba(0,0,0,.1);
-
-}
+document.getElementById(
+"current-user"
+).innerText=user.username;
 
 
 
+socket.emit(
+"online",
+user
+);
 
-.msg b {
 
-    color:#2563eb;
+
+loadUsers();
+
 
 }
 
@@ -316,63 +221,432 @@ button:hover {
 
 
 
-.input-box {
 
-    display:flex;
 
-    gap:10px;
 
-    padding:20px;
+// =========================
+// USERS
+// =========================
 
-    background:white;
+
+async function loadUsers(){
+
+
+const res =
+await fetch(
+
+SERVER+"/users"
+
+);
+
+
+
+const users =
+await res.json();
+
+
+
+let list =
+document.getElementById(
+"users-list"
+);
+
+
+
+if(!list){
+
+
+list =
+document.createElement("div");
+
+list.id="users-list";
+
+
+document
+.querySelector(".sidebar")
+.appendChild(list);
+
 
 }
 
 
 
-.input-box input {
+list.innerHTML="";
 
-    flex:1;
 
-    margin:0;
 
-    color:black;
+users.forEach(user=>{
 
-    background:#f1f5f9;
+
+if(user.id === currentUser.id)
+return;
+
+
+
+const div =
+document.createElement("div");
+
+
+
+div.className="user";
+
+
+div.innerHTML=
+
+`
+
+👤 ${user.username}
+
+`;
+
+
+
+div.onclick=()=>{
+
+openPrivateChat(user);
+
+};
+
+
+
+list.appendChild(div);
+
+
+
+});
+
 
 }
 
 
 
 
-.input-box button {
 
-    width:60px;
+
+
+
+// =========================
+// PRIVATE CHAT
+// =========================
+
+
+function openPrivateChat(user){
+
+
+selectedUser=user;
+
+
+
+document.querySelector(
+".chat-header h2"
+).innerText=
+
+user.username;
+
+
+
+loadPrivateMessages();
+
 
 }
 
 
 
 
-@media(max-width:800px){
 
 
-#chat-app {
 
-    width:100%;
+async function loadPrivateMessages(){
 
-    height:100vh;
 
-    border-radius:0;
+const res =
+await fetch(
+
+SERVER+
+
+"/private/"+
+
+currentUser.id+
+
+"/"+
+
+selectedUser.id
+
+);
+
+
+
+const msgs =
+await res.json();
+
+
+
+messages.innerHTML="";
+
+
+
+msgs.forEach(addMessage);
+
 
 }
 
 
-.sidebar {
 
-    display:none;
+
+
+
+
+
+
+// =========================
+// MESSAGES
+// =========================
+
+
+const messages =
+document.getElementById(
+"messages"
+);
+
+
+
+
+socket.on(
+
+"history",
+
+(data)=>{
+
+
+messages.innerHTML="";
+
+
+data.forEach(addMessage);
+
+
+});
+
+
+
+
+
+socket.on(
+
+"message",
+
+(data)=>{
+
+
+addMessage(data);
+
+
+});
+
+
+
+
+
+socket.on(
+
+"privateMessage",
+
+(data)=>{
+
+
+if(
+
+selectedUser &&
+
+data.sender_id===selectedUser.id
+
+){
+
+
+addMessage(data);
+
 
 }
+
+
+});
+
+
+
+
+
+
+
+
+function addMessage(data){
+
+
+const div =
+document.createElement("div");
+
+
+div.className="msg";
+
+
+div.innerHTML=
+
+`
+
+<b>${data.username || data.sender_name}</b>
+
+<br>
+
+${data.text}
+
+`;
+
+
+
+messages.appendChild(div);
+
+
+messages.scrollTop =
+messages.scrollHeight;
+
+
+}
+
+
+
+
+
+
+
+
+// =========================
+// SEND
+// =========================
+
+
+function sendMessage(){
+
+
+const input =
+document.getElementById(
+"message-text"
+);
+
+
+
+if(!input.value.trim())
+return;
+
+
+
+// личное сообщение
+
+if(selectedUser){
+
+
+socket.emit(
+
+"privateMessage",
+
+{
+
+sender_id:
+currentUser.id,
+
+
+receiver_id:
+selectedUser.id,
+
+
+sender_name:
+currentUser.username,
+
+
+text:
+input.value
+
+
+}
+
+);
+
+
+}
+
+else{
+
+
+socket.emit(
+
+"message",
+
+{
+
+username:
+currentUser.username,
+
+text:
+input.value
+
+
+}
+
+);
+
+
+}
+
+
+
+input.value="";
+
+
+}
+
+
+
+
+
+
+
+
+
+// =========================
+// AUTO LOGIN
+// =========================
+
+
+window.onload=()=>{
+
+
+const saved =
+localStorage.getItem(
+"user"
+);
+
+
+
+if(saved){
+
+openChat(
+JSON.parse(saved)
+);
+
+}
+
+
+};
+
+
+
+
+
+
+
+function logout(){
+
+
+localStorage.clear();
+
+location.reload();
 
 
 }
