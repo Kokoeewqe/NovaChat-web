@@ -289,6 +289,28 @@ document.getElementById(
 "current-user"
 ).innerText =
 user.username;
+document.getElementById(
+"user-avatar"
+).innerText =
+user.avatar || "👤";
+
+
+document.getElementById(
+"user-status"
+).innerText =
+user.status || "online";
+
+
+if(user.created_at){
+
+document.getElementById(
+"user-date"
+).innerText =
+"С нами с " +
+new Date(user.created_at)
+.toLocaleDateString();
+
+}
 
 
 
