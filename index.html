@@ -4,13 +4,17 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>NovaChat</title>
 
+
 <link rel="stylesheet" href="style.css">
 
+
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
 
 </head>
 
@@ -18,80 +22,49 @@
 <body>
 
 
-<!-- АВТОРИЗАЦИЯ -->
+
+<!-- =====================
+AUTH
+===================== -->
+
 
 <div id="auth" class="auth-box">
 
 
-    <h1>
-        🚀 NovaChat
-    </h1>
-
-
-    <div class="tabs">
-
-        <button onclick="showLogin()">
-            Вход
-        </button>
-
-
-        <button onclick="showRegister()">
-            Регистрация
-        </button>
-
-    </div>
+<h1>🚀 NovaChat</h1>
 
 
 
-    <div id="login-form">
+<div id="login-form">
 
 
-        <input 
-        id="login-email"
-        placeholder="Email">
+<h2>Вход</h2>
 
 
-        <input 
-        id="login-password"
-        type="password"
-        placeholder="Пароль">
+<input 
+id="login-email"
+placeholder="Email"
+>
 
 
-        <button onclick="login()">
-            Войти
-        </button>
+<input 
+id="login-password"
+type="password"
+placeholder="Пароль"
+>
 
 
-    </div>
+button onclick="login()">
+Войти
+</button>
 
 
+<br><br>
 
 
-    <div id="register-form" style="display:none;">
-
-
-        <input 
-        id="reg-name"
-        placeholder="Имя">
-
-
-        <input 
-        id="reg-email"
-        placeholder="Email">
-
-
-        <input 
-        id="reg-password"
-        type="password"
-        placeholder="Пароль">
-
-
-        <button onclick="register()">
-            Создать аккаунт
-        </button>
-
-
-    </div>
+<button onclick="showRegister()">
+Создать аккаунт
+</button>
 
 
 </div>
@@ -100,18 +73,77 @@
 
 
 
-<!-- ЧАТ -->
+<div id="register-form" style="display:none">
 
 
-<div id="chat-app" style="display:none;">
+<h2>Регистрация</h2>
 
 
 
-<aside class="sidebar">
+<input
+id="reg-name"
+placeholder="Имя"
+>
+
+
+
+<input
+id="reg-email"
+placeholder="Email"
+>
+
+
+
+<input
+id="reg-password"
+type="password"
+placeholder="Пароль"
+>
+
+
+
+<button onclick="register()">
+Регистрация
+</button>
+
+
+
+<br><br>
+
+
+<button onclick="showLogin()">
+Назад
+</button>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- =====================
+CHAT
+===================== -->
+
+
+<div id="chat-app" style="display:none">
+
+
+
+<div class="sidebar">
 
 
 <div class="logo">
+
 🚀 NovaChat
+
 </div>
 
 
@@ -120,18 +152,22 @@
 
 
 <div class="avatar">
+
 👤
+
 </div>
 
 
 <div>
 
 <h3 id="current-user">
+
+User
+
 </h3>
 
-
 <span>
-🟢 онлайн
+Online
 </span>
 
 
@@ -142,25 +178,29 @@
 
 
 
+<div id="users-list">
 
-<button onclick="logout()">
 
-Выйти
-
-</button>
+</div>
 
 
 
-</aside>
+</div>
 
 
 
 
 
-<main class="chat">
 
 
-<header class="chat-header">
+
+
+<div class="chat">
+
+
+
+<div class="chat-header">
+
 
 <h2>
 Общий чат
@@ -168,17 +208,28 @@
 
 
 <span>
-NovaChat v2
+🟢 online
 </span>
 
-</header>
 
-
-
-
-<div id="messages" class="messages">
 
 </div>
+
+
+
+
+
+
+
+<div 
+id="messages"
+class="messages">
+
+</div>
+
+
+
+
 
 
 
@@ -187,10 +238,17 @@ NovaChat v2
 <div class="input-box">
 
 
-<input 
-id="message-text"
-placeholder="Напишите сообщение...">
+<input
 
+id="message-text"
+
+placeholder="Введите сообщение..."
+
+onkeydown="
+if(event.key==='Enter') sendMessage()
+"
+
+>
 
 
 <button onclick="sendMessage()">
@@ -200,15 +258,20 @@ placeholder="Напишите сообщение...">
 </button>
 
 
+
+</div>
+
+
+
 </div>
 
 
 
-</main>
-
 
 
 </div>
+
+
 
 
 
